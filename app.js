@@ -7,6 +7,11 @@ app.get('/', (req, res) => {
     res.send('Hello, Docker!');
 });
 
+
+app.get('/secret', (req, res) => {
+    res.send('You found a secret!');
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
