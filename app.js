@@ -7,9 +7,8 @@ app.get('/', (req, res) => {
     res.send('Hello, Docker!');
 });
 
-
 app.get('/secret', (req, res) => {
-    res.send('You found a secret!');
+    res.send('You found a new secret!');
 });
 
 app.listen(PORT, () => {
