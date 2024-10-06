@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Define the environment variable for the port (default to 8080)
-ENV PORT 8080
+ENV PORT=8080
 
 # Expose the port specified in the environment variable
 EXPOSE ${PORT}
