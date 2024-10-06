@@ -23,11 +23,11 @@ fi
 
 # Stop and remove existing Docker containers
 echo "Stopping and removing existing Docker Compose containers..."
-docker-compose -f $DOCKER_COMPOSE_PATH down
+docker compose -f $DOCKER_COMPOSE_PATH down
 
 # Rebuild and run the Docker Compose services with the specified port
 echo "Building and running Docker Compose services on port ${APP_PORT}..."
-docker-compose -f $DOCKER_COMPOSE_PATH up --build -d
+docker compose -f $DOCKER_COMPOSE_PATH up --build -d
 
 if [ $? -ne 0 ]; then
     echo "Docker Compose failed to start services. Exiting."
