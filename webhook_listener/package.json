@@ -1,0 +1,17 @@
+{
+  "name": "webhook_listener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webhook.js",
+  "dependencies": {
+    "express": "^4.21.0",
+    "ngrok": "^5.0.0-beta.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
