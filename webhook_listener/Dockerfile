@@ -20,4 +20,4 @@ ENV PORT=8080
 EXPOSE ${PORT}
 
 # Run the application
-CMD ["node", "index.js"]
+CMD ["node", "webhook.js"]

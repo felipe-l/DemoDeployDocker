@@ -2,22 +2,39 @@
 
 # Load environment variables from the .env file
 set -a  # Automatically export all variables
-source ./app_deploy/.env
+. ./.env
 set +a  # Stop exporting
 
 # Step 1: Stop and remove the webhook listener container
 echo "Stopping and removing the webhook listener container..."
 if [ "$(docker ps -q -f name=$WEBHOOK_CONTAINER_NAME)" ]; then
-    docker stop $WEBHOOK_CONTAINER_NAME
-    docker rm $WEBHOOK_CONTAINER_NAME
-    echo "Webhook listener container removed."
+    # Attempt to stop the container
+    docker stop "$WEBHOOK_CONTAINER_NAME"
+    if [ $? -eq 0 ]; then
+        echo "Webhook listener container stopped."
+    else
+        echo "Failed to stop the webhook listener container, trying to force stop."
+        docker rm -f "$WEBHOOK_CONTAINER_NAME"  # Force remove if stop fails
+        echo "Webhook listener container forced removed."
+        exit 1
+    fi
+
+    # Attempt to remove the container
+    docker rm "$WEBHOOK_CONTAINER_NAME"
+    if [ $? -eq 0 ]; then
+        echo "Webhook listener container removed."
+    else
+        echo "Failed to remove the webhook listener container, trying to force remove."
+        docker rm -f "$WEBHOOK_CONTAINER_NAME"  # Force remove if rm fails
+        echo "Webhook listener container forced removed."
+    fi
 else
     echo "No running webhook listener container found."
 fi
 
 # Step 2: Stop and remove all backend services
 echo "Stopping and removing backend services..."
-cd "./app_deploy"
+cd "$APP_DEPLOY_DIR" || { echo "Directory not found: $APP_DEPLOY_DIR"; exit 1; }
 docker compose down --volumes
 echo "Backend services removed."
 

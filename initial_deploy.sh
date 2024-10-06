@@ -2,8 +2,19 @@
 
 # Load environment variables from the .env file
 set -a  # Automatically export all variables
-source ./.env
+. ./.env  # Use dot instead of source
 set +a  # Stop exporting
+
+# Call the cleanup script to remove any previous instances
+echo "Running cleanup before deployment..."
+./cleanup.sh
+
+# Debugging: Print loaded variables
+echo "Loaded variables:"
+echo "WEBHOOK_LISTENER_DIR: $WEBHOOK_LISTENER_DIR"
+echo "APP_DEPLOY_DIR: $APP_DEPLOY_DIR"
+echo "WEBHOOK_CONTAINER_NAME: $WEBHOOK_CONTAINER_NAME"
+echo "WEBHOOK_PORT: $WEBHOOK_PORT"
 
 # Step 1: Build and run the webhook listener
 echo "Building and starting the webhook listener..."

@@ -3,7 +3,7 @@ exec > "$(dirname "$0")/logfile.log" 2>&1  # Log file in the current directory
 
 # Load environment variables from the .env file
 set -a  # Automatically export all variables
-source ../.env
+. ../.env
 set +a  # Stop exporting
 
 # Navigate to the app_deploy directory
