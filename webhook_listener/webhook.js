@@ -1,5 +1,5 @@
 const express = require('express');
-const { exec } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
@@ -16,18 +16,25 @@ app.post('/webhook', (req, res) => {
     if (payload && payload.ref && payload.ref === 'refs/heads/main') {
         console.log('Received push event. Triggering deployment...');
 
-        // Use a relative path to the deploy.sh script in the app_deploy directory
-        const deployScriptPath = path.join(__dirname, '../app_deploy/deploy.sh');
+        // Construct the command to trigger the deploy.sh script via the named pipe
+        const deployCommand = `sh /home/bitmap/Projects/DemoDeployDocker/app_deploy/deploy.sh`;
+        
+        // Path to your named pipe
+        const pipePath = path.join(__dirname, '../hostpipe/mypipe');  // Adjust based on your mount point
 
-        // Execute the deploy script
-        exec(deployScriptPath, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error executing script: ${error.message}`);
+        const wstream = fs.createWriteStream(pipePath);
+        
+        wstream.write("echo hello" + "\n", (err) => {
+            
+        })
+        wstream.write(deployCommand + '\n', (err) => {
+            if (err) {
+                console.error(`Error writing to pipe: ${err.message}`);
                 return res.status(500).send('Deployment failed.');
             }
+            wstream.end();  // Close the stream
 
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
+            console.log('Deployment command sent to the pipe.');
             return res.status(200).send('Deployment triggered.');
         });
     } else {

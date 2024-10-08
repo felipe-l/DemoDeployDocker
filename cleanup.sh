@@ -32,6 +32,9 @@ else
     echo "No running webhook listener container found."
 fi
 
+#Remove cron job responsible for executing deploy.sh and stop any current instance
+./clean_up_cron_job.sh
+
 # Step 2: Stop and remove all backend services
 echo "Stopping and removing backend services..."
 cd "$APP_DEPLOY_DIR" || { echo "Directory not found: $APP_DEPLOY_DIR"; exit 1; }

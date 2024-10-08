@@ -19,5 +19,8 @@ ENV PORT=8080
 # Expose the port specified in the environment variable
 EXPOSE ${PORT}
 
+# Create a mount point for the named pipe
+VOLUME /hostpipe
+
 # Run the application
 CMD ["node", "webhook.js"]

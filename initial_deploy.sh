@@ -1,5 +1,11 @@
 #!/bin/bash
 
+echo "Setting executable permissions for scripts..."
+chmod +x ./cleanup.sh
+chmod +x ./add_cron_job.sh
+chmod +x ./clean_up_cron_job.sh
+chmod +x ./app_deploy/deploy.sh  # Assuming deploy.sh is inside the app_deploy directory
+
 # Load environment variables from the .env file
 set -a  # Automatically export all variables
 . ./.env  # Use dot instead of source
@@ -16,6 +22,19 @@ echo "APP_DEPLOY_DIR: $APP_DEPLOY_DIR"
 echo "WEBHOOK_CONTAINER_NAME: $WEBHOOK_CONTAINER_NAME"
 echo "WEBHOOK_PORT: $WEBHOOK_PORT"
 
+# Check if named pipe exists, if not create it
+PIPE_PATH="$(dirname "$0")/pipe/mypipe"  # Update this to match the location of your pipe
+
+if [ ! -p "$PIPE_PATH" ]; then
+    mkfifo "$PIPE_PATH"
+    echo "Created named pipe at $PIPE_PATH"
+else
+    echo "Named pipe already exists at $PIPE_PATH"
+fi
+
+echo "setting cron job"
+./add_cron_job.sh
+
 # Step 1: Build and run the webhook listener
 echo "Building and starting the webhook listener..."
 cd "$WEBHOOK_LISTENER_DIR" || { echo "Directory not found: $WEBHOOK_LISTENER_DIR"; exit 1; }
@@ -29,7 +48,10 @@ if [ "$(docker ps -q -f name=$WEBHOOK_CONTAINER_NAME)" ]; then
 fi
 
 # Run the webhook listener container
-docker run -d -p "$WEBHOOK_PORT:8080" --name "$WEBHOOK_CONTAINER_NAME" "$WEBHOOK_CONTAINER_NAME"
+docker run -d -p "$WEBHOOK_PORT:8080" \
+    --name "$WEBHOOK_CONTAINER_NAME" \
+    -v "$(pwd)/../pipe:/hostpipe" \
+    "$WEBHOOK_CONTAINER_NAME"
 
 # Check if webhook listener started successfully
 if [ $? -ne 0 ]; then
