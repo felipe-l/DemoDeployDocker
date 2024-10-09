@@ -66,6 +66,11 @@ echo "Running deployment for backend..."
 cd "../$APP_DEPLOY_DIR" || { echo "Directory not found: $APP_DEPLOY_DIR"; exit 1; }
 ./deploy.sh
 
+if [ "$SETUP_SSL" = true ]; then
+    echo "Setting up SSL..."
+    ./setup_nginx_ssl.sh
+fi
+
 # Check if the deploy script ran successfully
 if [ $? -ne 0 ]; then
     echo "Deployment failed. Exiting."
