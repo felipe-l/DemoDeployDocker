@@ -17,7 +17,7 @@ app.post('/webhook', (req, res) => {
         console.log('Received push event. Triggering deployment...');
 
         // Construct the command to trigger the deploy.sh script via the named pipe
-        const deployCommand = `sh /home/bitmap/Projects/DemoDeployDocker/app_deploy/deploy.sh`;
+        const deployCommand = `sh ../app_deploy/deploy.sh`;
         
         // Path to your named pipe
         const pipePath = path.join(__dirname, '../hostpipe/mypipe');  // Adjust based on your mount point
