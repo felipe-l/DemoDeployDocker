@@ -1,6 +1,7 @@
 #!/bin/bash
 exec > "$(dirname "$0")/logfile.log" 2>&1  # Log file in the current directory
 
+echo "HERE!"
 # Load environment variables from the .env file
 set -a  # Automatically export all variables
 . ../.env

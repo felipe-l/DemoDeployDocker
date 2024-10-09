@@ -47,10 +47,10 @@ if [ "$(docker ps -q -f name=$WEBHOOK_CONTAINER_NAME)" ]; then
     docker rm "$WEBHOOK_CONTAINER_NAME"
 fi
 
-# Run the webhook listener container
 docker run -d -p "$WEBHOOK_PORT:8080" \
     --name "$WEBHOOK_CONTAINER_NAME" \
     -v "$(pwd)/../pipe:/hostpipe" \
+    --env-file ./../.env \
     "$WEBHOOK_CONTAINER_NAME"
 
 # Check if webhook listener started successfully
