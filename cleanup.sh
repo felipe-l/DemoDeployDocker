@@ -32,14 +32,20 @@ else
     echo "No running webhook listener container found."
 fi
 
-#Remove cron job responsible for executing deploy.sh and stop any current instance
+# Remove cron job responsible for executing deploy.sh and stop any current instance
 ./clean_up_cron_job.sh
 
-# Step 2: Stop and remove all backend services
+# Step 2: Stop and remove all backend services in app_deploy
 echo "Stopping and removing backend services..."
-cd "$APP_DEPLOY_DIR" || { echo "Directory not found: $APP_DEPLOY_DIR"; exit 1; }
-docker compose down --volumes
-echo "Backend services removed."
+for dir in "$(dirname "$0")"/app_deploy/*; do
+    if [ -d "$dir" ] && [ -f "$dir/docker-compose.yml" ]; then
+        echo "Stopping and removing services in $dir..."
+        cd "$dir" || { echo "Failed to navigate to $dir"; exit 1; }
+        docker compose down --volumes
+        echo "Backend services in $dir removed."
+        cd ..  # Navigate back to app_deploy directory
+    fi
+done
 
 # Step 3: Remove any dangling images or unused volumes
 echo "Removing dangling images and unused volumes..."
@@ -47,7 +53,7 @@ docker image prune -f
 docker volume prune -f
 echo "Cleanup completed."
 
-# Step 4: Navigate back to the original directory
+# Step 4: Navigate back to the original directory (if needed)
 cd ..
 
 echo "All containers and resources cleaned up."
