@@ -77,17 +77,4 @@ systemctl reload nginx
 # Obtain or renew SSL certificate
 certbot --nginx -d "$DOMAIN_NAME" --email "$EMAIL" --agree-tos --non-interactive --redirect
 
-echo "Nginx and SSL setup completed for $DOMAIN_NAME"n
-nginx -t
-if [ $? -ne 0 ]; then
-  echo "Nginx configuration test failed. Exiting."
-  exit 1
-fi
-
-# Reload Nginx to apply changes
-systemctl reload nginx
-
-# Obtain or renew SSL certificate
-certbot --nginx -d "$DOMAIN_NAME" --email "$EMAIL" --agree-tos --non-interactive --redirect
-
 echo "Nginx and SSL setup completed for $DOMAIN_NAME"
