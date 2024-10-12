@@ -5,6 +5,7 @@ chmod +x ./cleanup.sh
 chmod +x ./add_cron_job.sh
 chmod +x ./clean_up_cron_job.sh
 chmod +x ./app_deploy/deploy.sh  # Assuming deploy.sh is inside the app_deploy directory
+chmod +x ./setup_nginx_ssl.sh  # Ensure setup_nginx_ssl.sh is executable
 
 # Load environment variables from the .env file
 set -a  # Automatically export all variables
@@ -66,6 +67,7 @@ echo "Running deployment for backend..."
 cd "../$APP_DEPLOY_DIR" || { echo "Directory not found: $APP_DEPLOY_DIR"; exit 1; }
 ./deploy.sh
 
+cd ..
 if [ "$SETUP_SSL" = true ]; then
     echo "Setting up SSL..."
     ./setup_nginx_ssl.sh
